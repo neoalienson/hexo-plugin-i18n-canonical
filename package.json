@@ -1,0 +1,21 @@
+{
+  "name": "hexo-plugin-i18n-canonical",
+  "version": "1.0.0",
+  "description": "Hexo plugin to manage canonical URLs for multilingual sites",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha index.test.js"
+  },
+  "keywords": [
+    "hexo",
+    "canonical",
+    "multilang",
+    "i18n",
+    "seo"
+  ],
+  "author": "neo01.com",
+  "license": "MIT",
+  "devDependencies": {
+    "mocha": "^10.0.0"
+  }
+}
