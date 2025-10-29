@@ -8,13 +8,27 @@
   },
   "keywords": [
     "hexo",
+    "hexo-plugin",
     "canonical",
     "multilang",
     "i18n",
-    "seo"
+    "seo",
+    "hreflang",
+    "multilingual"
   ],
   "author": "neo01.com",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/neo01/hexo-plugin-i18n-canonical.git"
+  },
+  "bugs": {
+    "url": "https://github.com/neo01/hexo-plugin-i18n-canonical/issues"
+  },
+  "homepage": "https://github.com/neo01/hexo-plugin-i18n-canonical#readme",
+  "engines": {
+    "node": ">=12.0.0"
+  },
   "devDependencies": {
     "mocha": "^10.0.0"
   }
