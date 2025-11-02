@@ -59,25 +59,15 @@ function buildCanonicalTags(data, config) {
   const lang = data.lang || 'en';
   const canonicalLang = data.canonical_lang || cfg.default_lang;
   
-  let canonicalPath;
-  if (data.canonical_lang) {
-    canonicalPath = data.path.replace(/index\.html$/, '');
-  } else {
-    canonicalPath = getCanonicalPath(data.path, lang, config);
-    if (canonicalLang !== cfg.default_lang) {
-      const basePath = getBasePath(data.path, config);
-      canonicalPath = canonicalLang + '/' + basePath;
-    }
-  }
-  
   const basePath = getBasePath(data.path, config);
-  let canonicalUrl = config.url + '/' + canonicalPath;
-  // Ensure trailing slash for directory URLs
-  if (canonicalUrl === config.url || canonicalUrl.endsWith('/')) {
-    canonicalUrl = canonicalUrl || config.url + '/';
-  } else if (!canonicalUrl.includes('.')) {
-    canonicalUrl += '/';
+  let canonicalPath;
+  if (data.canonical_lang && data.canonical_lang !== cfg.default_lang) {
+    canonicalPath = data.canonical_lang + '/' + basePath;
+  } else {
+    canonicalPath = basePath;
   }
+  let canonicalUrl = config.url + '/' + canonicalPath;
+  canonicalUrl = canonicalUrl.replace(/\/$/, '');
   
   const canonical = `<link rel="canonical" href="${canonicalUrl}" />`;
   
@@ -87,12 +77,7 @@ function buildCanonicalTags(data, config) {
       langPath = l + '/' + basePath;
     }
     let langUrl = config.url + '/' + langPath;
-    // Ensure trailing slash for directory URLs
-    if (langUrl === config.url || langUrl.endsWith('/')) {
-      langUrl = langUrl || config.url + '/';
-    } else if (!langUrl.includes('.')) {
-      langUrl += '/';
-    }
+    langUrl = langUrl.replace(/\/$/, '');
     const hreflangAttr = l === canonicalLang ? `${l}" data-canonical="true` : l;
     return `<link rel="alternate" hreflang="${hreflangAttr}" href="${langUrl}" />`;
   }).join('\n  ');

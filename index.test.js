@@ -1,4 +1,5 @@
 const assert = require('assert');
+const { describe, it } = require('mocha');
 const plugin = require('./index');
 const { getCanonicalPath, getBasePath, defaultConfig, buildCanonicalTags } = plugin;
 
@@ -77,82 +78,190 @@ describe('hexo-canonical-multilang', () => {
       }
     };
 
-    it('should use current path as canonical when canonical_lang is set', () => {
-      const data = {
-        path: 'zh-CN/2025/10/cisp/',
-        lang: 'zh-CN',
-        canonical_lang: 'zh-CN'
-      };
-      const { canonical } = buildCanonicalTags(data, mockConfig);
-      assert.strictEqual(canonical, '<link rel="canonical" href="https://neo01.com/zh-CN/2025/10/cisp" />');
+    describe('canonical_lang behavior', () => {
+      it('should use zh-CN path as canonical when canonical_lang=zh-CN', () => {
+        const data = {
+          path: 'zh-CN/2025/10/cisp/',
+          lang: 'zh-CN',
+          canonical_lang: 'zh-CN'
+        };
+        const { canonical } = buildCanonicalTags(data, mockConfig);
+        assert.strictEqual(canonical, '<link rel="canonical" href="https://neo01.com/zh-CN/2025/10/cisp" />');
+      });
+
+      it('should point English canonical when canonical_lang not set', () => {
+        const data = {
+          path: '2025/10/cisp/',
+          lang: 'en'
+        };
+        const { canonical } = buildCanonicalTags(data, mockConfig);
+        assert.strictEqual(canonical, '<link rel="canonical" href="https://neo01.com/2025/10/cisp" />');
+      });
+
+      it('should point English canonical when canonical_lang=en explicitly', () => {
+        const data = {
+          path: '2025/10/article/',
+          lang: 'en',
+          canonical_lang: 'en'
+        };
+        const { canonical } = buildCanonicalTags(data, mockConfig);
+        assert.strictEqual(canonical, '<link rel="canonical" href="https://neo01.com/2025/10/article" />');
+      });
     });
 
-    it('should point to default lang when canonical_lang not set', () => {
-      const data = {
-        path: '2025/10/cisp/',
-        lang: 'en'
-      };
-      const { canonical } = buildCanonicalTags(data, mockConfig);
-      assert.strictEqual(canonical, '<link rel="canonical" href="https://neo01.com/2025/10/cisp" />');
+    describe('translated pages without canonical_lang', () => {
+      it('should point Japanese page to English canonical', () => {
+        const data = {
+          path: 'ja/2025/10/article/',
+          lang: 'ja'
+        };
+        const { canonical } = buildCanonicalTags(data, mockConfig);
+        assert.strictEqual(canonical, '<link rel="canonical" href="https://neo01.com/2025/10/article" />');
+      });
+
+      it('should point zh-TW page to English canonical', () => {
+        const data = {
+          path: 'zh-TW/tools/',
+          lang: 'zh-TW'
+        };
+        const { canonical } = buildCanonicalTags(data, mockConfig);
+        assert.strictEqual(canonical, '<link rel="canonical" href="https://neo01.com/tools" />');
+      });
+
+      it('should point zh-CN page to English canonical', () => {
+        const data = {
+          path: 'zh-CN/about/',
+          lang: 'zh-CN'
+        };
+        const { canonical } = buildCanonicalTags(data, mockConfig);
+        assert.strictEqual(canonical, '<link rel="canonical" href="https://neo01.com/about" />');
+      });
     });
 
-    it('should mark canonical language in hreflang tags', () => {
-      const data = {
-        path: 'zh-CN/2025/10/cisp/',
-        lang: 'zh-CN',
-        canonical_lang: 'zh-CN'
-      };
-      const { hreflangTags } = buildCanonicalTags(data, mockConfig);
-      assert(hreflangTags.includes('hreflang="zh-CN" data-canonical="true"'));
+    describe('hreflang tags', () => {
+      it('should mark canonical language with data-canonical=true', () => {
+        const data = {
+          path: 'zh-CN/2025/10/cisp/',
+          lang: 'zh-CN',
+          canonical_lang: 'zh-CN'
+        };
+        const { hreflangTags } = buildCanonicalTags(data, mockConfig);
+        assert(hreflangTags.includes('hreflang="zh-CN" data-canonical="true"'));
+      });
+
+      it('should mark English as canonical when canonical_lang not set', () => {
+        const data = {
+          path: 'ja/2025/10/article/',
+          lang: 'ja'
+        };
+        const { hreflangTags } = buildCanonicalTags(data, mockConfig);
+        assert(hreflangTags.includes('hreflang="en" data-canonical="true"'));
+      });
+
+      it('should generate all language hreflang tags', () => {
+        const data = {
+          path: 'zh-CN/2025/10/cisp/',
+          lang: 'zh-CN',
+          canonical_lang: 'zh-CN'
+        };
+        const { hreflangTags } = buildCanonicalTags(data, mockConfig);
+        assert(hreflangTags.includes('hreflang="en"'));
+        assert(hreflangTags.includes('hreflang="zh-TW"'));
+        assert(hreflangTags.includes('hreflang="zh-CN"'));
+        assert(hreflangTags.includes('hreflang="ja"'));
+      });
+
+      it('should generate correct URLs for all languages', () => {
+        const data = {
+          path: '2025/10/article/',
+          lang: 'en'
+        };
+        const { hreflangTags } = buildCanonicalTags(data, mockConfig);
+        assert(hreflangTags.includes('href="https://neo01.com/2025/10/article"'));
+        assert(hreflangTags.includes('href="https://neo01.com/zh-TW/2025/10/article"'));
+        assert(hreflangTags.includes('href="https://neo01.com/zh-CN/2025/10/article"'));
+        assert(hreflangTags.includes('href="https://neo01.com/ja/2025/10/article"'));
+      });
     });
 
-    it('should generate all hreflang tags', () => {
-      const data = {
-        path: 'zh-CN/2025/10/cisp/',
-        lang: 'zh-CN',
-        canonical_lang: 'zh-CN'
-      };
-      const { hreflangTags } = buildCanonicalTags(data, mockConfig);
-      assert(hreflangTags.includes('hreflang="en"'));
-      assert(hreflangTags.includes('hreflang="zh-TW"'));
-      assert(hreflangTags.includes('hreflang="zh-CN"'));
-      assert(hreflangTags.includes('hreflang="ja"'));
+    describe('edge cases', () => {
+      it('should handle homepage', () => {
+        const data = {
+          path: 'index.html',
+          lang: 'en'
+        };
+        const { canonical } = buildCanonicalTags(data, mockConfig);
+        assert.strictEqual(canonical, '<link rel="canonical" href="https://neo01.com" />');
+      });
+
+      it('should handle translated homepage', () => {
+        const data = {
+          path: 'zh-TW/index.html',
+          lang: 'zh-TW'
+        };
+        const { canonical } = buildCanonicalTags(data, mockConfig);
+        assert.strictEqual(canonical, '<link rel="canonical" href="https://neo01.com" />');
+      });
+
+      it('should handle missing lang (defaults to en)', () => {
+        const data = {
+          path: '2025/10/article/'
+        };
+        const { canonical } = buildCanonicalTags(data, mockConfig);
+        assert.strictEqual(canonical, '<link rel="canonical" href="https://neo01.com/2025/10/article" />');
+      });
+
+      it('should handle paths with index.html', () => {
+        const data = {
+          path: 'ja/2025/10/article/index.html',
+          lang: 'ja'
+        };
+        const { canonical } = buildCanonicalTags(data, mockConfig);
+        assert.strictEqual(canonical, '<link rel="canonical" href="https://neo01.com/2025/10/article" />');
+      });
+
+      it('should handle deep nested paths', () => {
+        const data = {
+          path: 'ja/category/subcategory/2025/10/article/',
+          lang: 'ja'
+        };
+        const { canonical } = buildCanonicalTags(data, mockConfig);
+        assert.strictEqual(canonical, '<link rel="canonical" href="https://neo01.com/category/subcategory/2025/10/article" />');
+      });
     });
 
-    it('should handle homepage', () => {
-      const data = {
-        path: 'index.html',
-        lang: 'en'
-      };
-      const { canonical } = buildCanonicalTags(data, mockConfig);
-      assert.strictEqual(canonical, '<link rel="canonical" href="https://neo01.com" />');
-    });
+    describe('consistency checks', () => {
+      it('should ensure canonical URL matches one of the hreflang URLs', () => {
+        const data = {
+          path: 'ja/2025/10/article/',
+          lang: 'ja'
+        };
+        const { canonical, hreflangTags } = buildCanonicalTags(data, mockConfig);
+        const canonicalUrl = canonical.match(/href="([^"]+)"/)[1];
+        assert(hreflangTags.includes(`href="${canonicalUrl}"`));
+      });
 
-    it('should handle translated homepage', () => {
-      const data = {
-        path: 'zh-TW/index.html',
-        lang: 'zh-TW'
-      };
-      const { canonical } = buildCanonicalTags(data, mockConfig);
-      assert.strictEqual(canonical, '<link rel="canonical" href="https://neo01.com" />');
-    });
+      it('should have exactly one data-canonical=true in hreflang tags', () => {
+        const data = {
+          path: 'zh-CN/2025/10/cisp/',
+          lang: 'zh-CN',
+          canonical_lang: 'zh-CN'
+        };
+        const { hreflangTags } = buildCanonicalTags(data, mockConfig);
+        const matches = hreflangTags.match(/data-canonical="true"/g);
+        assert.strictEqual(matches.length, 1);
+      });
 
-    it('should handle zh-TW page pointing to English canonical', () => {
-      const data = {
-        path: 'zh-TW/tools/',
-        lang: 'zh-TW'
-      };
-      const { canonical } = buildCanonicalTags(data, mockConfig);
-      assert.strictEqual(canonical, '<link rel="canonical" href="https://neo01.com/tools" />');
-    });
-
-    it('should handle English page when zh-CN is canonical', () => {
-      const data = {
-        path: '2025/10/cisp/',
-        lang: 'en'
-      };
-      const { canonical } = buildCanonicalTags(data, mockConfig);
-      assert.strictEqual(canonical, '<link rel="canonical" href="https://neo01.com/2025/10/cisp" />');
+      it('should have hreflang tag for each configured language', () => {
+        const data = {
+          path: '2025/10/article/',
+          lang: 'en'
+        };
+        const { hreflangTags } = buildCanonicalTags(data, mockConfig);
+        mockConfig.canonical_multilang.languages.forEach(lang => {
+          assert(hreflangTags.includes(`hreflang="${lang}`));
+        });
+      });
     });
   });
 });

@@ -57,9 +57,10 @@ canonical_multilang:
 The plugin automatically:
 
 1. Detects language from `lang` front matter
-2. Generates canonical URLs pointing to default language version
-3. Removes language prefixes from translated pages
-4. Respects `canonical_lang` front matter for non-English canonical content
+2. Generates canonical URLs pointing to English version (unless `canonical_lang` is set)
+3. Adds hreflang tags for all language variants
+4. Marks canonical language with `data-canonical="true"` attribute
+5. Respects `canonical_lang` front matter for non-English canonical content
 
 ### Front Matter Options
 
@@ -81,9 +82,12 @@ When `canonical_lang` is set:
 ## Examples
 
 **Default Behavior (English as canonical):**
-- `/zh-TW/tools/` → canonical: `https://neo01.com/tools/`
-- `/ja/2025/10/article/` → canonical: `https://neo01.com/2025/10/article/`
-- `/about/` (English) → canonical: `https://neo01.com/about/`
+
+All translated pages point to English version:
+- Japanese page `/ja/2025/10/article/` → canonical: `https://neo01.com/2025/10/article`
+- zh-TW page `/zh-TW/tools/` → canonical: `https://neo01.com/tools`
+- zh-CN page `/zh-CN/about/` → canonical: `https://neo01.com/about`
+- English page `/about/` → canonical: `https://neo01.com/about`
 
 **With canonical_lang (Non-English canonical):**
 - `/zh-CN/2025/10/cisp/` with `canonical_lang: zh-CN` → canonical: `https://neo01.com/zh-CN/2025/10/cisp/`
@@ -92,10 +96,11 @@ When `canonical_lang` is set:
 
 **Hreflang Tags (added to all pages):**
 ```html
-<link rel="alternate" hreflang="en" href="https://neo01.com/2025/10/article/" />
-<link rel="alternate" hreflang="zh-TW" href="https://neo01.com/zh-TW/2025/10/article/" />
-<link rel="alternate" hreflang="zh-CN" href="https://neo01.com/zh-CN/2025/10/article/" />
-<link rel="alternate" hreflang="ja" href="https://neo01.com/ja/2025/10/article/" />
+<link rel="canonical" href="https://neo01.com/2025/10/article" />
+<link rel="alternate" hreflang="en" data-canonical="true" href="https://neo01.com/2025/10/article" />
+<link rel="alternate" hreflang="zh-TW" href="https://neo01.com/zh-TW/2025/10/article" />
+<link rel="alternate" hreflang="zh-CN" href="https://neo01.com/zh-CN/2025/10/article" />
+<link rel="alternate" hreflang="ja" href="https://neo01.com/ja/2025/10/article" />
 ```
 
 ## Testing
