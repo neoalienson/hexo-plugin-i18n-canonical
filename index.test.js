@@ -86,7 +86,7 @@ describe('hexo-canonical-multilang', () => {
           canonical_lang: 'zh-CN'
         };
         const { canonical } = buildCanonicalTags(data, mockConfig);
-        assert.strictEqual(canonical, '<link rel="canonical" href="https://neo01.com/zh-CN/2025/10/cisp" />');
+        assert.strictEqual(canonical, '<link rel="canonical" href="https://neo01.com/zh-CN/2025/10/cisp/" />');
       });
 
       it('should point English canonical when canonical_lang not set', () => {
@@ -95,7 +95,7 @@ describe('hexo-canonical-multilang', () => {
           lang: 'en'
         };
         const { canonical } = buildCanonicalTags(data, mockConfig);
-        assert.strictEqual(canonical, '<link rel="canonical" href="https://neo01.com/2025/10/cisp" />');
+        assert.strictEqual(canonical, '<link rel="canonical" href="https://neo01.com/2025/10/cisp/" />');
       });
 
       it('should point English canonical when canonical_lang=en explicitly', () => {
@@ -105,7 +105,7 @@ describe('hexo-canonical-multilang', () => {
           canonical_lang: 'en'
         };
         const { canonical } = buildCanonicalTags(data, mockConfig);
-        assert.strictEqual(canonical, '<link rel="canonical" href="https://neo01.com/2025/10/article" />');
+        assert.strictEqual(canonical, '<link rel="canonical" href="https://neo01.com/2025/10/article/" />');
       });
     });
 
@@ -116,7 +116,7 @@ describe('hexo-canonical-multilang', () => {
           lang: 'ja'
         };
         const { canonical } = buildCanonicalTags(data, mockConfig);
-        assert.strictEqual(canonical, '<link rel="canonical" href="https://neo01.com/2025/10/article" />');
+        assert.strictEqual(canonical, '<link rel="canonical" href="https://neo01.com/2025/10/article/" />');
       });
 
       it('should point zh-TW page to English canonical', () => {
@@ -125,7 +125,7 @@ describe('hexo-canonical-multilang', () => {
           lang: 'zh-TW'
         };
         const { canonical } = buildCanonicalTags(data, mockConfig);
-        assert.strictEqual(canonical, '<link rel="canonical" href="https://neo01.com/tools" />');
+        assert.strictEqual(canonical, '<link rel="canonical" href="https://neo01.com/tools/" />');
       });
 
       it('should point zh-CN page to English canonical', () => {
@@ -134,7 +134,7 @@ describe('hexo-canonical-multilang', () => {
           lang: 'zh-CN'
         };
         const { canonical } = buildCanonicalTags(data, mockConfig);
-        assert.strictEqual(canonical, '<link rel="canonical" href="https://neo01.com/about" />');
+        assert.strictEqual(canonical, '<link rel="canonical" href="https://neo01.com/about/" />');
       });
     });
 
@@ -177,10 +177,10 @@ describe('hexo-canonical-multilang', () => {
           lang: 'en'
         };
         const { hreflangTags } = buildCanonicalTags(data, mockConfig);
-        assert(hreflangTags.includes('href="https://neo01.com/2025/10/article"'));
-        assert(hreflangTags.includes('href="https://neo01.com/zh-TW/2025/10/article"'));
-        assert(hreflangTags.includes('href="https://neo01.com/zh-CN/2025/10/article"'));
-        assert(hreflangTags.includes('href="https://neo01.com/ja/2025/10/article"'));
+        assert(hreflangTags.includes('href="https://neo01.com/2025/10/article/"'));
+        assert(hreflangTags.includes('href="https://neo01.com/zh-TW/2025/10/article/"'));
+        assert(hreflangTags.includes('href="https://neo01.com/zh-CN/2025/10/article/"'));
+        assert(hreflangTags.includes('href="https://neo01.com/ja/2025/10/article/"'));
       });
     });
 
@@ -191,7 +191,7 @@ describe('hexo-canonical-multilang', () => {
           lang: 'en'
         };
         const { canonical } = buildCanonicalTags(data, mockConfig);
-        assert.strictEqual(canonical, '<link rel="canonical" href="https://neo01.com" />');
+        assert.strictEqual(canonical, '<link rel="canonical" href="https://neo01.com/" />');
       });
 
       it('should handle translated homepage', () => {
@@ -200,7 +200,7 @@ describe('hexo-canonical-multilang', () => {
           lang: 'zh-TW'
         };
         const { canonical } = buildCanonicalTags(data, mockConfig);
-        assert.strictEqual(canonical, '<link rel="canonical" href="https://neo01.com" />');
+        assert.strictEqual(canonical, '<link rel="canonical" href="https://neo01.com/" />');
       });
 
       it('should handle missing lang (defaults to en)', () => {
@@ -208,7 +208,7 @@ describe('hexo-canonical-multilang', () => {
           path: '2025/10/article/'
         };
         const { canonical } = buildCanonicalTags(data, mockConfig);
-        assert.strictEqual(canonical, '<link rel="canonical" href="https://neo01.com/2025/10/article" />');
+        assert.strictEqual(canonical, '<link rel="canonical" href="https://neo01.com/2025/10/article/" />');
       });
 
       it('should handle paths with index.html', () => {
@@ -217,7 +217,7 @@ describe('hexo-canonical-multilang', () => {
           lang: 'ja'
         };
         const { canonical } = buildCanonicalTags(data, mockConfig);
-        assert.strictEqual(canonical, '<link rel="canonical" href="https://neo01.com/2025/10/article" />');
+        assert.strictEqual(canonical, '<link rel="canonical" href="https://neo01.com/2025/10/article/" />');
       });
 
       it('should handle deep nested paths', () => {
@@ -226,7 +226,7 @@ describe('hexo-canonical-multilang', () => {
           lang: 'ja'
         };
         const { canonical } = buildCanonicalTags(data, mockConfig);
-        assert.strictEqual(canonical, '<link rel="canonical" href="https://neo01.com/category/subcategory/2025/10/article" />');
+        assert.strictEqual(canonical, '<link rel="canonical" href="https://neo01.com/category/subcategory/2025/10/article/" />');
       });
     });
 

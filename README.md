@@ -10,6 +10,7 @@ Hexo plugin to manage canonical URLs for multilingual sites.
 - Supports custom canonical language via `canonical_lang` front matter
 - Supports zh-TW, zh-CN, and ja translations
 - Skips pages that already have canonical tags
+- Enhanced URL normalization and trailing slash handling
 - Improves SEO for multilingual content
 
 ## Installation

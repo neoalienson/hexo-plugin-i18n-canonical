@@ -67,7 +67,11 @@ function buildCanonicalTags(data, config) {
     canonicalPath = basePath;
   }
   let canonicalUrl = config.url + '/' + canonicalPath;
-  canonicalUrl = canonicalUrl.replace(/\/$/, '');
+  // Keep trailing slash for directories (empty path = homepage, or paths ending with /)
+  // Remove trailing slash only for non-directory paths
+  if (canonicalPath !== '' && !canonicalPath.endsWith('/')) {
+    canonicalUrl = canonicalUrl.replace(/\/$/, '');
+  }
   
   const canonical = `<link rel="canonical" href="${canonicalUrl}" />`;
   
@@ -77,7 +81,10 @@ function buildCanonicalTags(data, config) {
       langPath = l + '/' + basePath;
     }
     let langUrl = config.url + '/' + langPath;
-    langUrl = langUrl.replace(/\/$/, '');
+    // Keep trailing slash for directories
+    if (langPath !== '' && !langPath.endsWith('/')) {
+      langUrl = langUrl.replace(/\/$/, '');
+    }
     const hreflangAttr = l === canonicalLang ? `${l}" data-canonical="true` : l;
     return `<link rel="alternate" hreflang="${hreflangAttr}" href="${langUrl}" />`;
   }).join('\n  ');

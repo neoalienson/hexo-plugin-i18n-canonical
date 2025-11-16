@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.2.0] - 2025-11-16
+
+### Improved
+- Enhanced trailing slash handling for canonical and hreflang URLs
+- Improved URL normalization to prevent double slashes
+- Better directory path detection for homepage and directory URLs
+- Refined canonical URL generation logic for consistency
+
+### Fixed
+- Fixed trailing slash removal for non-directory paths
+- Improved URL construction to handle edge cases properly
+
 ## [1.1.0] - 2025-11-03
 
 ### Fixed
